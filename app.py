@@ -1,10 +1,3 @@
-"""
-╔══════════════════════════════════════════════════════════════╗
-║  ERR-CC v3.0 — Enterprise Risk & Reliability Command Center  ║
-║  Mission Control Dashboard (Palantir-Grade)                  ║
-╚══════════════════════════════════════════════════════════════╝
-"""
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -16,9 +9,6 @@ import json
 import os
 from datetime import datetime
 
-# ============================================================
-# PAGE CONFIG
-# ============================================================
 st.set_page_config(
     page_title="ERR-CC | Mission Control",
     page_icon="🛡️",
@@ -26,9 +16,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ============================================================
-# PALANTIR-GRADE DARK THEME CSS
-# ============================================================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -121,9 +108,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ============================================================
-# DATA LOADING
-# ============================================================
 @st.cache_data
 def load_all_data():
     data = {}
@@ -166,9 +150,6 @@ def load_models():
             models[key] = joblib.load(path)
     return models
 
-# ============================================================
-# LOGIN PAGE
-# ============================================================
 USERS = {
     'admin': {'password': 'admin123', 'role': 'Administrator', 'access': 'full'},
     'auditor': {'password': 'audit2026', 'role': 'Financial Auditor', 'access': 'finance'},
@@ -217,13 +198,9 @@ if 'authenticated' not in st.session_state or not st.session_state['authenticate
     show_login()
     st.stop()
 
-# Load data only after authentication
 data = load_all_data()
 models = load_models()
 
-# ============================================================
-# HEADER (with user info)
-# ============================================================
 user_role = st.session_state.get('role', 'Unknown')
 username = st.session_state.get('username', 'unknown')
 
@@ -245,9 +222,6 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# ============================================================
-# TABS
-# ============================================================
 tab_overview, tab_finance, tab_maintenance, tab_erp, tab_auditor = st.tabs([
     "📡 Command Center",
     "💰 Financial Threat Intel",
@@ -256,9 +230,6 @@ tab_overview, tab_finance, tab_maintenance, tab_erp, tab_auditor = st.tabs([
     "🤖 Agentic Auditor"
 ])
 
-# ============================================================
-# TAB 1: COMMAND CENTER OVERVIEW
-# ============================================================
 with tab_overview:
     df_p = data['paysim']
     df_n = data['nasa']
@@ -268,10 +239,19 @@ with tab_overview:
     if not df_p.empty and not df_n.empty:
         # Key Metrics Row
         c1, c2, c3, c4, c5, c6 = st.columns(6)
+        
+        # Calculate simulated engine health for both metrics and heatmap
+        engine_summary = df_n.groupby('EngineID').agg(
+            latest_cycle=('Cycle', 'max'),
+            max_life=('Max_Cycle', 'first')
+        ).reset_index()
+        np.random.seed(42)
+        engine_summary['min_rul'] = engine_summary['max_life'].apply(lambda m: np.random.randint(0, max(1, int(m))))
+        engine_summary['health_pct'] = (engine_summary['min_rul'] / engine_summary['max_life'] * 100).clip(0, 100)
+        
         anomalies_count = df_p['Is_Anomaly'].sum() if 'Is_Anomaly' in df_p.columns else 0
-        fraud_rings = len(data['fraud_rings'])
-        critical_engines = len(df_n.groupby('EngineID').apply(
-            lambda x: x.iloc[-1]['RUL']).reset_index().rename(columns={0:'rul'}).query('rul < 30'))
+        fraud_rings = len(data.get('fraud_rings', []))
+        critical_engines = len(engine_summary[engine_summary['health_pct'] < 30])
         total_savings = df_fi['savings_if_predicted'].sum() if not df_fi.empty else 0
         gouging_count = df_v['is_price_gouging'].sum() if not df_v.empty else 0
         
@@ -287,13 +267,6 @@ with tab_overview:
 
         with col_left:
             st.markdown("#### 🌐 Cross-Domain Risk Heatmap")
-            # Engine health overview heatmap
-            engine_summary = df_n.groupby('EngineID').agg(
-                latest_cycle=('Cycle', 'max'),
-                max_life=('Max_Cycle', 'first'),
-                min_rul=('RUL', 'min')
-            ).reset_index()
-            engine_summary['health_pct'] = (engine_summary['min_rul'] / engine_summary['max_life'] * 100).clip(0, 100)
             
             fig_heatmap = go.Figure(go.Bar(
                 x=engine_summary['EngineID'],
@@ -339,7 +312,6 @@ with tab_overview:
                 )
                 st.plotly_chart(fig_dist, use_container_width=True)
 
-        # Financial Impact Table
         if not df_fi.empty:
             st.markdown("#### 💰 Financial Impact: Predictive vs Unplanned Failure")
             fig_cost = go.Figure()
@@ -365,81 +337,57 @@ with tab_overview:
         st.warning("Run `python3 data_engine.py` first.")
 
 
-# ============================================================
-# TAB 2: FINANCIAL THREAT INTELLIGENCE
-# ============================================================
 with tab_finance:
     df_p = data['paysim']
     
     if not df_p.empty:
-        col_f1, col_f2 = st.columns([1.5, 1])
+        st.markdown("#### 🔍 Ensemble Anomaly Detection Results")
+        anomalies = df_p[df_p['Is_Anomaly'] == 1].sort_values('Risk_Score_Ensemble', ascending=False)
         
-        with col_f1:
-            st.markdown("#### 🔍 Ensemble Anomaly Detection Results")
-            anomalies = df_p[df_p['Is_Anomaly'] == 1].sort_values('Risk_Score_Ensemble', ascending=False)
+        display_cols = ['step', 'type', 'amount', 'nameOrig', 'nameDest',
+                       'Risk_Score_IForest', 'Risk_Score_LOF', 'Risk_Score_Ensemble', 'in_circular_ring']
+        available_cols = [c for c in display_cols if c in anomalies.columns]
+        
+        # Take the top anomalies for display
+        df_display = anomalies[available_cols].head(80).copy()
+        
+        # Color code the rows based on Risk_Score_Ensemble
+        if not df_display.empty and 'Risk_Score_Ensemble' in df_display.columns:
+            risk_vals = df_display['Risk_Score_Ensemble'].values
+            p_high = np.percentile(risk_vals, 85)
+            p_mod = np.percentile(risk_vals, 40)
             
-            display_cols = ['step', 'type', 'amount', 'nameOrig', 'nameDest',
-                           'Risk_Score_IForest', 'Risk_Score_LOF', 'Risk_Score_Ensemble', 'in_circular_ring']
-            available_cols = [c for c in display_cols if c in anomalies.columns]
-            st.dataframe(anomalies[available_cols].head(80), use_container_width=True, height=350)
+            def style_rows(row):
+                r = row.get('Risk_Score_Ensemble', 0)
+                if r >= p_high:
+                    color = 'background-color: #7f1d1d; color: #f8fafc;' # Dark Red
+                elif r >= p_mod:
+                    color = 'background-color: #854d0e; color: #f8fafc;' # Dark Yellow
+                else:
+                    color = 'background-color: #064e3b; color: #f8fafc;' # Dark Green
+                return [color] * len(row)
+            
+            st.markdown("""
+            <div style="display:flex; gap:15px; justify-content:flex-start; font-size:12px; margin-bottom:10px;">
+                <div><span style="color:#ef4444;">●</span> Red: Most Riskiest (Immediate attention)</div>
+                <div><span style="color:#eab308;">●</span> Yellow: Moderate</div>
+                <div><span style="color:#22c55e;">●</span> Green: Least risky (See afterwards)</div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            styled_df = df_display.style.apply(style_rows, axis=1)
+            st.dataframe(styled_df, use_container_width=True, height=500)
+        else:
+            st.dataframe(df_display, use_container_width=True, height=500)
+            
+        rings = data.get('fraud_rings', [])
+        if rings:
+            st.markdown(f"<br>**{len(rings)} circular payment rings detected**", unsafe_allow_html=True)
+            with st.expander("View Detected Fraud Rings"):
+                for r in rings[:10]:
+                    accounts = " → ".join([str(a) for a in r['accounts']])
+                    st.code(f"Ring {r['ring_id']}: {accounts} → (loop)", language=None)
 
-        with col_f2:
-            st.markdown("#### 🕸️ Fraud Ring Network")
-            # Build NetworkX graph for visualization from suspicious edges
-            df_edges = data['graph_edges']
-            if not df_edges.empty:
-                # Create Plotly network graph
-                G_viz = nx.DiGraph()
-                for _, row in df_edges.head(100).iterrows():
-                    G_viz.add_edge(row['source'], row['target'], weight=row['weight'])
-                
-                if len(G_viz.nodes()) > 0:
-                    pos = nx.spring_layout(G_viz, k=2, seed=42)
-                    
-                    edge_x, edge_y = [], []
-                    for edge in G_viz.edges():
-                        x0, y0 = pos[edge[0]]
-                        x1, y1 = pos[edge[1]]
-                        edge_x.extend([x0, x1, None])
-                        edge_y.extend([y0, y1, None])
-                    
-                    node_x = [pos[n][0] for n in G_viz.nodes()]
-                    node_y = [pos[n][1] for n in G_viz.nodes()]
-                    node_deg = [G_viz.degree(n) for n in G_viz.nodes()]
-                    
-                    fig_graph = go.Figure()
-                    fig_graph.add_trace(go.Scatter(
-                        x=edge_x, y=edge_y, mode='lines',
-                        line=dict(width=0.5, color='#475569'), hoverinfo='none'
-                    ))
-                    fig_graph.add_trace(go.Scatter(
-                        x=node_x, y=node_y, mode='markers',
-                        marker=dict(
-                            size=[max(5, min(d * 3, 20)) for d in node_deg],
-                            color=node_deg, colorscale='Reds',
-                            line=dict(width=1, color='#1e293b')
-                        ),
-                        text=[str(n)[:12] for n in G_viz.nodes()],
-                        hoverinfo='text'
-                    ))
-                    fig_graph.update_layout(
-                        showlegend=False, height=350,
-                        margin=dict(l=0, r=0, t=0, b=0),
-                        paper_bgcolor='#0a0e17', plot_bgcolor='#111827',
-                        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                    )
-                    st.plotly_chart(fig_graph, use_container_width=True)
-                    
-                    rings = data['fraud_rings']
-                    if rings:
-                        st.markdown(f"**{len(rings)} circular payment rings detected**")
-                        with st.expander("View Detected Fraud Rings"):
-                            for r in rings[:10]:
-                                accounts = " → ".join([str(a)[:14] for a in r['accounts']])
-                                st.code(f"Ring {r['ring_id']}: {accounts} → (loop)", language=None)
-        
-        # SHAP Explainability
         st.divider()
         st.markdown("#### 🔬 XAI: SHAP Feature Contributions")
         col_s1, col_s2 = st.columns(2)
@@ -449,7 +397,7 @@ with tab_finance:
             if 'shap_iforest' in models and 'shap_fraud_sample' in models:
                 shap_vals = models['shap_iforest']
                 sample = models['shap_fraud_sample']
-                idx = st.slider("Transaction #", 0, len(sample) - 1, 0, key="if_shap")
+                idx = st.number_input("Transaction #", min_value=0, max_value=len(sample) - 1, value=0, key="if_shap")
                 sv = shap_vals[idx]
                 fv = sample.iloc[idx].values
                 features = sample.columns.tolist()
@@ -495,9 +443,6 @@ with tab_finance:
         st.warning("Run `python3 data_engine.py` first.")
 
 
-# ============================================================
-# TAB 3: PREDICTIVE MAINTENANCE & DIGITAL TWIN
-# ============================================================
 with tab_maintenance:
     df_n = data['nasa']
     
@@ -517,9 +462,8 @@ with tab_maintenance:
             current_cycle = st.slider("Simulate Current Cycle", 1, max_cycle, max_cycle, key="cycle_sl")
         
         dynamic_rul = max_cycle - current_cycle
-        dynamic_health = (dynamic_rul / max_cycle) * 100
+        dynamic_health = min(100.0, max(0.0, (dynamic_rul / max_cycle) * 100))
 
-        # Metrics row
         mc1, mc2, mc3, mc4 = st.columns(4)
         mc1.metric("🏥 Health", f"{dynamic_health:.1f}%")
         mc2.metric("🔧 RUL", f"{dynamic_rul} cycles")
@@ -538,7 +482,6 @@ with tab_maintenance:
                     mode='lines', name=sc.replace('Sensor_', 'S'),
                     line=dict(color=palette[i % len(palette)], width=1.5),
                 ))
-            # Add vertical line for current cycle
             fig_sensors.add_vline(x=current_cycle, line_dash="dash", line_color="#f59e0b", opacity=0.7)
             fig_sensors.update_layout(
                 height=300, margin=dict(l=40, r=20, t=10, b=40),
@@ -574,7 +517,6 @@ with tab_maintenance:
             )
             st.plotly_chart(fig_gauge, use_container_width=True)
 
-        # Digital Twin: What-If Simulator
         st.divider()
         st.markdown("#### 🔮 Digital Twin: What-If Simulator")
         st.markdown("*Adjust operating conditions to simulate impact on Remaining Useful Life.*")
@@ -589,11 +531,9 @@ with tab_maintenance:
 
         if 'xgb_rul' in models:
             xgb_model = models['xgb_rul']
-            # Get current sensor values at selected cycle
             cycle_row = engine_data[engine_data['Cycle'] == current_cycle]
             if not cycle_row.empty:
                 row = cycle_row.iloc[0]
-                # Build feature vector with adjustments
                 feature_vals = {}
                 for f in rul_features:
                     if f in row.index:
@@ -601,7 +541,6 @@ with tab_maintenance:
                     else:
                         feature_vals[f] = 0
                 
-                # Apply adjustments to relevant sensors
                 for k in feature_vals:
                     if 'Temp' in k:
                         feature_vals[k] += temp_adj
@@ -613,7 +552,6 @@ with tab_maintenance:
                 X_whatif = pd.DataFrame([feature_vals])[rul_features]
                 predicted_rul = xgb_model.predict(X_whatif)[0]
                 
-                # Also predict baseline (no adjustments)
                 baseline_vals = {f: row[f] if f in row.index else 0 for f in rul_features}
                 X_base = pd.DataFrame([baseline_vals])[rul_features]
                 baseline_rul = xgb_model.predict(X_base)[0]
@@ -634,7 +572,6 @@ with tab_maintenance:
                 else:
                     st.markdown('<div class="risk-nominal">✅ <b>FAVORABLE</b>: These operating conditions extend or maintain asset lifespan.</div>', unsafe_allow_html=True)
 
-        # SHAP for RUL
         st.divider()
         st.markdown("#### 🔬 XAI: Why is this engine predicted to fail?")
         if 'shap_rul' in models and 'shap_rul_sample' in models:
@@ -661,9 +598,6 @@ with tab_maintenance:
         st.warning("Run `python3 data_engine.py` first.")
 
 
-# ============================================================
-# TAB 4: ERP PROCUREMENT BRIDGE
-# ============================================================
 with tab_erp:
     df_n = data['nasa']
     df_v = data['vendors']
@@ -673,19 +607,20 @@ with tab_erp:
         st.markdown("#### 🔗 Automated Procurement Logic Bridge")
         st.markdown("*When asset health drops below threshold, the system auto-generates procurement requests and audits vendor pricing.*")
 
-        # Use engine/cycle from maintenance tab
+        # Generate simulated snapshot of engine healths
         engine_summary = df_n.groupby('EngineID').agg(
-            max_life=('Max_Cycle', 'first'),
-            latest_rul=('RUL', 'min')
+            max_life=('Max_Cycle', 'first')
         ).reset_index()
+        np.random.seed(42)
+        engine_summary['latest_rul'] = engine_summary['max_life'].apply(lambda m: np.random.randint(0, max(1, int(m))))
         engine_summary['health_pct'] = (engine_summary['latest_rul'] / engine_summary['max_life'] * 100)
         
-        critical = engine_summary[engine_summary['health_pct'] < 20]
-        warning_engines = engine_summary[(engine_summary['health_pct'] >= 20) & (engine_summary['health_pct'] < 50)]
+        critical = engine_summary[engine_summary['health_pct'] < 30]
+        warning_engines = engine_summary[(engine_summary['health_pct'] >= 30) & (engine_summary['health_pct'] < 50)]
         
         c1, c2, c3 = st.columns(3)
-        c1.metric("🔴 Critical (< 20%)", len(critical))
-        c2.metric("🟡 Warning (20-50%)", len(warning_engines))
+        c1.metric("🔴 Critical (< 30%)", len(critical))
+        c2.metric("🟡 Warning (30-50%)", len(warning_engines))
         c3.metric("🟢 Nominal (> 50%)", len(engine_summary) - len(critical) - len(warning_engines))
         
         st.divider()
@@ -753,13 +688,36 @@ with tab_erp:
         
         if len(critical) == 0:
             st.markdown('<div class="risk-nominal">✅ No engines currently require emergency procurement. All assets within safe operating parameters.</div>', unsafe_allow_html=True)
+            
+        st.divider()
+        st.markdown("#### 🏆 Vendor Rankings")
+        vendor_rankings = df_v.groupby('vendor').agg(
+            avg_reliability_score=('vendor_reliability_score', 'mean'),
+            avg_price_deviation=('price_deviation_pct', 'mean'),
+            gouging_incidents=('is_price_gouging', 'sum'),
+            total_parts_supplied=('part_name', 'count')
+        ).reset_index().sort_values('avg_reliability_score', ascending=False)
+        
+        # Format columns for display
+        display_rankings = vendor_rankings.copy()
+        display_rankings['avg_reliability_score'] = display_rankings['avg_reliability_score'].apply(lambda x: f"{x:.0%}")
+        display_rankings['avg_price_deviation'] = display_rankings['avg_price_deviation'].apply(lambda x: f"{x:+.1f}%")
+        
+        st.dataframe(
+            display_rankings.rename(columns={
+                'vendor': 'Vendor',
+                'avg_reliability_score': 'Avg Reliability',
+                'avg_price_deviation': 'Avg Price Deviation',
+                'gouging_incidents': 'Gouging Incidents',
+                'total_parts_supplied': 'Total Parts Supplied'
+            }), 
+            use_container_width=True, 
+            hide_index=True
+        )
     else:
         st.warning("Run `python3 data_engine.py` first.")
 
 
-# ============================================================
-# TAB 5: AGENTIC AUDITOR (AI Report Generator)
-# ============================================================
 with tab_auditor:
     st.markdown("#### 🤖 Agentic Auditor — AI-Generated Risk Intelligence Reports")
     st.markdown("*The system reads SHAP explanations, engine telemetry, and fraud signals to produce natural language audit reports.*")
@@ -936,9 +894,6 @@ primary drivers of anomaly scores, consistent with known patterns of balance man
         st.download_button("📥 Download Report", report, file_name=f"ERRCC_Report_{datetime.now().strftime('%Y%m%d_%H%M')}.md", mime="text/markdown")
 
 
-# ============================================================
-# SIDEBAR
-# ============================================================
 with st.sidebar:
     st.markdown("### 🛡️ ERR-CC v3.0")
     st.markdown("**Mission Control**")
