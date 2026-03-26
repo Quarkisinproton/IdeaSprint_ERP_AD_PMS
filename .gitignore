@@ -1,0 +1,11 @@
+# Data
+DataSets/
+models/
+venv/
+.venv/
+__pycache__/
+
+.idea/
+.vscode/
+*.swp
+.DS_Store
