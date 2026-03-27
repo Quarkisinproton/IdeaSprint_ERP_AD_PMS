@@ -159,6 +159,28 @@ if 'authenticated' not in st.session_state or not st.session_state['authenticate
     show_login()
     st.stop()
 
+
+# Initialize Simulation State
+if 'sim_active' not in st.session_state: st.session_state['sim_active'] = False
+if 'sim_logs' not in st.session_state: st.session_state['sim_logs'] = []
+
+def run_simulation():
+    st.session_state['sim_active'] = True
+    st.session_state['sim_logs'] = [
+        ('📡', 'EURI Neural Engine: Ingressing 4.2M Transaction Burst...'),
+        ('⚠️', 'CRITICAL ANOMALY: Unauthorized Treasury Withdrawal detected (Z-Score: 12.4)'),
+        ('🔎', 'Agentic Auditor: Identifying Destination Node... 0x8a...4b (Ghost Vendor)'),
+        ('🛡️', 'EURI MITIGATION: [ACTION] Freezing SAP Outbound Payment Gateway...'),
+        ('⛓️', 'EURI MITIGATION: [ACTION] Initiating Chain-of-Custody Log in Auditor...'),
+        ('📧', 'EURI MITIGATION: [ACTION] Pushing High-Risk Slack Alert to CFO Cabinet...'),
+        ('✅', 'EURI MITIGATION: Threat Contained. Manual Audit Requested.')
+    ]
+
+# Header UI Update for Simulation
+if st.session_state.get('sim_active'):
+    st.markdown('<div style="background-color:#7f1d1d; color:white; padding:10px; border-radius:8px; text-align:center; font-weight:bold; margin-bottom:20px; border:2px solid #ef4444; animation: pulse 2s infinite;">🚨 ACTIVE THREAT MITIGATION IN PROGRESS: .42M SUSPICIOUS OUTBOUND DETECTED</div>', unsafe_allow_html=True)
+    st.markdown('<style>@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }</style>', unsafe_allow_html=True)
+
 data = load_all_data()
 models = load_models()
 user_role = st.session_state.get('role', 'Unknown')
