@@ -163,22 +163,50 @@ if 'authenticated' not in st.session_state or not st.session_state['authenticate
 # Initialize Simulation State
 if 'sim_active' not in st.session_state: st.session_state['sim_active'] = False
 if 'sim_logs' not in st.session_state: st.session_state['sim_logs'] = []
+if 'sim_type' not in st.session_state: st.session_state['sim_type'] = ''
 
-def run_simulation():
+def run_simulation(atype):
     st.session_state['sim_active'] = True
-    st.session_state['sim_logs'] = [
-        ('📡', 'EURI Neural Engine: Ingressing 4.2M Transaction Burst...'),
-        ('⚠️', 'CRITICAL ANOMALY: Unauthorized Treasury Withdrawal detected (Z-Score: 12.4)'),
-        ('🔎', 'Agentic Auditor: Identifying Destination Node... 0x8a...4b (Ghost Vendor)'),
-        ('🛡️', 'EURI MITIGATION: [ACTION] Freezing SAP Outbound Payment Gateway...'),
-        ('⛓️', 'EURI MITIGATION: [ACTION] Initiating Chain-of-Custody Log in Auditor...'),
-        ('📧', 'EURI MITIGATION: [ACTION] Pushing High-Risk Slack Alert to CFO Cabinet...'),
-        ('✅', 'EURI MITIGATION: Threat Contained. Manual Audit Requested.')
-    ]
+    st.session_state['sim_type'] = atype
+    if atype == 'Financial':
+        st.session_state['sim_logs'] = [
+            ('📡', 'EURI Neural Engine: Ingressing 4.2M Transaction Burst...'),
+            ('⚠️', 'CRITICAL ANOMALY: Unauthorized Treasury Withdrawal detected (Z-Score: 12.4)'),
+            ('🔎', 'Agentic Auditor: Identifying Destination Node... 0x8a...4b (Ghost Vendor)'),
+            ('🛡️', 'EURI MITIGATION: [ACTION] Freezing SAP Outbound Payment Gateway...'),
+            ('⛓️', 'EURI MITIGATION: [ACTION] Initiating Chain-of-Custody Log...'),
+            ('📧', 'EURI MITIGATION: [ACTION] Pushing High-Risk Slack Alert to CFO Cabinet...'),
+            ('✅', 'EURI MITIGATION: .42M Outbound Containment Successful.')
+        ]
+    elif atype == 'Manufacturing':
+        st.session_state['sim_logs'] = [
+            ('⚙️', 'Sensor Ingress: Real-time Telemetry for Jet Engine #4 (Sector 7B)...'),
+            ('🔥', 'CRITICAL ALERT: Exhaust Temp Spike (942°C) + Vibration Chaos detected!'),
+            ('📉', 'EURI Predictive Engine: RUL plummeted from 42h to 0.4h in 60 seconds.'),
+            ('🛑', 'EURI MITIGATION: [ACTION] Triggering Emergency Engine Kill-Switch...'),
+            ('🏗️', 'EURI MITIGATION: [ACTION] Auto-Dispatching Maintenance Crew to Hangar 4.'),
+            ('📋', 'EURI MITIGATION: [ACTION] Generating Automated Failure Analysis Report.'),
+            ('✅', 'EURI MITIGATION: Asset shutdown successful. Preventing Catastrophic Explosion.')
+        ]
+    elif atype == 'Cyber':
+        st.session_state['sim_logs'] = [
+            ('🌐', 'Cloud Guard: Monitoring Lateral Movement in Oracle ERP Cloud...'),
+            ('🔑', 'CRITICAL ALERT: Brute-force credentials detected on SSH Port 22 (940 attempts/min)'),
+            ('👤', 'Agentic Auditor: Identity Trace... Authenticated as [admin] from Unauthorized IP (Moscow)'),
+            ('🚫', 'EURI MITIGATION: [ACTION] Revoking Global Admin Credentials for Session ID #847'),
+            ('🛡️', 'EURI MITIGATION: [ACTION] Activating Zero-Trust Isolation for Data Warehouse Hub...'),
+            ('💬', 'EURI MITIGATION: [ACTION] Opening Incident Response Bridge in MS Teams.'),
+            ('✅', 'EURI MITIGATION: Data Breach Prevented. Intrusion Source Isolated.')
+        ]
 
 # Header UI Update for Simulation
 if st.session_state.get('sim_active'):
-    st.markdown('<div style="background-color:#7f1d1d; color:white; padding:10px; border-radius:8px; text-align:center; font-weight:bold; margin-bottom:20px; border:2px solid #ef4444; animation: pulse 2s infinite;">🚨 ACTIVE THREAT MITIGATION IN PROGRESS: .42M SUSPICIOUS OUTBOUND DETECTED</div>', unsafe_allow_html=True)
+    atype = st.session_state.get('sim_type', 'THREAT')
+    banner_color = '#7f1d1d'
+    if atype == 'Manufacturing': banner_color = '#9a3412'
+    if atype == 'Cyber': banner_color = '#1e3a8a'
+    
+    st.markdown(f'<div style="background-color:{banner_color}; color:white; padding:10px; border-radius:8px; text-align:center; font-weight:bold; margin-bottom:20px; border:2px solid #ef4444; animation: pulse 2s infinite;">🚨 ACTIVE {atype.upper()} MITIGATION IN PROGRESS: CRITICAL ANOMALY DETECTED</div>', unsafe_allow_html=True)
     st.markdown('<style>@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }</style>', unsafe_allow_html=True)
 
 data = load_all_data()
