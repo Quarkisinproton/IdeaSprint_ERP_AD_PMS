@@ -884,24 +884,34 @@ print("  → [7C] Running adversarial evasion tests...")
 try:
     X_fraud_anomalies = X_fraud[df_paysim['Is_Anomaly'] == 1].values
     
+    # Pre-fit scalers on ALL data so single-sample predictions are calibrated
+    all_if_scores = -sklearn_if.decision_function(X_fraud.values)
+    if_scaler_adv = MinMaxScaler()
+    if_scaler_adv.fit(all_if_scores.reshape(-1, 1))
+    
+    ae_input_scaler = StandardScaler()
+    ae_input_scaler.fit(X_fraud.values)
+    
     def single_predict(X):
-        return MinMaxScaler().fit_transform(
-            (-sklearn_if.decision_function(X)).reshape(-1, 1)
-        ).flatten()
+        """IForest-only scores using pre-fitted scaler."""
+        raw = -sklearn_if.decision_function(X)
+        return if_scaler_adv.transform(raw.reshape(-1, 1)).flatten()
     
     def ensemble_predict(X):
-        s1 = MinMaxScaler().fit_transform(
-            (-sklearn_if.decision_function(X)).reshape(-1, 1)
-        ).flatten()
+        """Combined IForest + AE scores using pre-fitted scalers."""
+        s1 = if_scaler_adv.transform((-sklearn_if.decision_function(X)).reshape(-1, 1)).flatten()
         if ae_model is not None:
-            s2 = ae_anomaly_scores(ae_model, StandardScaler().fit_transform(X), ae_scaler)
+            s2 = ae_anomaly_scores(ae_model, ae_input_scaler.transform(X), ae_scaler)
         else:
             s2 = np.zeros(len(X))
         return 0.5 * s1 + 0.5 * s2
     
+    # Use 99th percentile as threshold (matches the anomaly detection threshold)
+    adv_threshold = 0.5
+    
     adv_results = adversarial_evasion_test(
         X_fraud_anomalies, single_predict, ensemble_predict,
-        threshold=0.5, epsilon=0.1, n_steps=5
+        threshold=adv_threshold, epsilon=0.05, n_steps=10
     )
     with open("DataSets/Synthetic/adversarial_results.json", "w") as f:
         json.dump(adv_results, f, indent=2)

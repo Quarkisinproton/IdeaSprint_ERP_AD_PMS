@@ -38,6 +38,8 @@ st.markdown("""
     .risk-warning { background: linear-gradient(135deg, #451a03, #78350f); border: 1px solid #d97706; border-radius: 8px; padding: 16px; margin: 8px 0; color: #fde68a; font-family: 'Inter'; }
     .info-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 8px 0; font-family: 'Inter'; color: var(--text-primary); }
     .header-banner { background: linear-gradient(135deg, #0f172a, #1e1b4b); border: 1px solid #312e81; border-radius: 10px; padding: 12px 24px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+    @keyframes blink-critical { 0%, 100% { background-color: #7f1d1d; } 50% { background-color: #450a0a; } }
+    .po-legend { display:flex; gap:18px; font-size:12px; margin-bottom:8px; font-family:'Inter'; color:#94a3b8; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -484,7 +486,20 @@ with tab_maintenance:
             po_c1.metric("Total POs", len(df_pos))
             po_c2.metric("Auto-Approved", int(df_pos['auto_approved'].sum()) if 'auto_approved' in df_pos.columns else 0)
             po_c3.metric("Total Spend", f"${df_pos['total_cost'].sum():,.0f}" if 'total_cost' in df_pos.columns else "$0")
-            st.dataframe(df_pos, use_container_width=True, height=250, hide_index=True)
+            st.markdown("""<div class="po-legend">
+                <div><span style="color:#ef4444;">⬤ ⬤</span> CRITICAL (blinking)</div>
+                <div><span style="color:#b91c1c;">⬤</span> HIGH (red)</div>
+                <div><span style="color:#eab308;">⬤</span> MEDIUM (yellow)</div>
+            </div>""", unsafe_allow_html=True)
+            def style_po_rows(row):
+                urg = row.get('urgency_level', '')
+                if urg == 'CRITICAL':
+                    return ['background-color: #7f1d1d; color: #fecaca; animation: blink-critical 1s ease-in-out infinite;'] * len(row)
+                elif urg == 'HIGH':
+                    return ['background-color: #991b1b; color: #fecaca;'] * len(row)
+                else:
+                    return ['background-color: #854d0e; color: #fef3c7;'] * len(row)
+            st.dataframe(df_pos.style.apply(style_po_rows, axis=1), use_container_width=True, height=300, hide_index=True)
             st.download_button("📥 Export POs as CSV", df_pos.to_csv(index=False), "purchase_orders.csv", "text/csv")
     else:
         st.warning("Run `python data_engine.py` first.")
