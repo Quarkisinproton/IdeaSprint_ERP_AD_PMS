@@ -195,12 +195,13 @@ rc4.metric("🛡️ Robustness Score", f"{ri.get('robustness', 0):.0f}/10")
 # ============================================================
 # TABS
 # ============================================================
-tab_overview, tab_finance, tab_maintenance, tab_erp, tab_auditor = st.tabs([
+tab_overview, tab_finance, tab_maintenance, tab_erp, tab_auditor, tab_hr = st.tabs([
     "📡 Command Center",
     "💰 Financial Threat Intel",
     "⚙️ Predictive Maintenance",
     "🔗 ERP Procurement Bridge",
-    "🤖 Agentic Auditor"
+    "🤖 Agentic Auditor",
+    "👥 HR Insider Risk"
 ])
 
 # ============================================================
@@ -828,6 +829,64 @@ primary drivers of anomaly scores, consistent with known patterns of balance man
                     st.markdown(report)
 
         st.download_button("📥 Download Report", report, file_name=f"ERRCC_Report_{datetime.now().strftime('%Y%m%d_%H%M')}.md", mime="text/markdown")
+
+# ============================================================
+# TAB 6: HR INSIDER RISK (MOCKUP)
+# ============================================================
+with tab_hr:
+    st.markdown("### 👥 Employee & Insider Threat Intelligence")
+    st.markdown("<span style='color: #94a3b8;'>Detecting Segregation of Duties (SoD) violations, off-hour access, and unauthorized cross-module lateral movement.</span>", unsafe_allow_html=True)
+    st.divider()
+    
+    col_hr1, col_hr2 = st.columns([2, 1])
+    
+    with col_hr1:
+        st.markdown("#### 🚨 Flagged Access Anomalies")
+        
+        # Generate mock HR threat data
+        mock_hr_data = pd.DataFrame({
+            'Employee_ID': ['E-8472', 'E-9104', 'E-3321', 'E-5590', 'E-4102'],
+            'Department': ['HR/Payroll', 'Supply Chain', 'Finance', 'IT Ops', 'HR/Payroll'],
+            'Anomaly_Type': ['SoD Violation', 'Odd-Hour Access', 'Lateral Movement', 'Data Exfiltration Risk', 'Ghost Employee Creation'],
+            'Severity': ['CRITICAL', 'HIGH', 'HIGH', 'ELEVATED', 'CRITICAL'],
+            'Description': [
+                'Created vendor AND approved $14k PO',
+                'Logged into S/4HANA at 03:14 AM (Off-shift)',
+                'Accessed Vendor Master Data (Unusual for role)',
+                'Mass download of employee PII tables',
+                'Created payroll record avoiding manager workflow'
+            ],
+            'Risk_Score': [98, 85, 79, 65, 94]
+        })
+        
+        def hr_styler(row):
+            if row['Severity'] == 'CRITICAL':
+                return ['background-color: #7f1d1d; color: #f8fafc;'] * len(row)
+            elif row['Severity'] == 'HIGH':
+                return ['background-color: #854d0e; color: #f8fafc;'] * len(row)
+            return ['background-color: #064e3b; color: #f8fafc;'] * len(row)
+            
+        st.dataframe(mock_hr_data.style.apply(hr_styler, axis=1), use_container_width=True, hide_index=True)
+        
+    with col_hr2:
+        st.markdown("#### Risk by Department")
+        # Mock chart
+        dept_risk = pd.DataFrame({
+            'Department': ['Finance', 'HR/Payroll', 'Supply Chain', 'IT Ops', 'Engineering'],
+            'Incidents': [14, 22, 18, 5, 2]
+        })
+        
+        fig_hr = px.bar(dept_risk, x='Incidents', y='Department', orientation='h', 
+                        color='Incidents', color_continuous_scale='Reds')
+        fig_hr.update_layout(**DARK_LAYOUT, height=300, showlegend=False, margin=dict(l=0, r=0, t=20, b=0))
+        st.plotly_chart(fig_hr, use_container_width=True)
+        
+        st.markdown("""<div class='info-card'>
+            <b>🛡️ HR Security Policies Enforced</b><br>
+            • Segregation of Duties (SoD)<br>
+            • Time-of-Travel Anomalies<br>
+            • Privilege Escalation Attempts
+        </div>""", unsafe_allow_html=True)
 
 # ============================================================
 # SIDEBAR
