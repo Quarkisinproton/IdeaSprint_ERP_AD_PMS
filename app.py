@@ -8,7 +8,7 @@ import os
 import joblib
 from datetime import datetime
 
-st.set_page_config(page_title="EURI v4.0 | Mission Control", page_icon="🛡️", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="EURI | Mission Control", page_icon="🛡️", layout="wide", initial_sidebar_state="collapsed")
 
 # ============================================================
 # CSS THEME
@@ -112,7 +112,7 @@ def show_login():
     <div style="display:flex;justify-content:center;margin-top:60px;">
         <div style="background:linear-gradient(135deg,#0f172a,#1e1b4b);border:1px solid #312e81;border-radius:16px;padding:40px 48px;width:420px;text-align:center;">
             <div style="font-size:40px;margin-bottom:8px;">🛡️</div>
-            <div style="font-size:22px;font-weight:700;color:#f1f5f9;font-family:'Inter';">EURI v4.0 Mission Control</div>
+            <div style="font-size:22px;font-weight:700;color:#f1f5f9;font-family:'Inter';">EURI Mission Control</div>
             <div style="font-size:13px;color:#94a3b8;margin-bottom:24px;">Enterprise Unified Risk Intelligence</div>
         </div>
     </div>
@@ -170,7 +170,7 @@ st.markdown(f"""
 <div class="header-banner">
     <span style="font-size:28px;">🛡️</span>
     <div style="flex:1;">
-        <div style="font-size:20px;font-weight:700;color:#f1f5f9;font-family:'Inter';">EURI v4.0 Mission Control</div>
+        <div style="font-size:20px;font-weight:700;color:#f1f5f9;font-family:'Inter';">EURI Mission Control</div>
         <div style="font-size:12px;color:#94a3b8;">Enterprise Unified Risk Intelligence</div>
     </div>
     <div style="text-align:center;margin:0 20px;">
@@ -894,7 +894,7 @@ with tab_hr:
 # SIDEBAR
 # ============================================================
 with st.sidebar:
-    st.markdown("### 🛡️ EURI v4.0")
+    st.markdown("### 🛡️ EURI")
     manifest = data.get('manifest', {})
     st.markdown(f"**Version:** {manifest.get('version', '4.0')}")
     st.markdown(f"**Trained:** {manifest.get('trained_at', 'N/A')[:19]}")
