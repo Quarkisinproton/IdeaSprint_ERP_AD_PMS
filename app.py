@@ -298,7 +298,7 @@ with tab_finance:
         if score_col in df_p.columns:
             anomalies = df_p[df_p['Is_Anomaly'] == 1].sort_values('Risk_Score_Ensemble', ascending=False)
             display_cols = ['step', 'type', 'amount', 'nameOrig', 'nameDest', score_col, 'Risk_Score_Ensemble', 'in_circular_ring']
-            available = [c for c in display_cols if c in anomalies.columns]
+            available = list(dict.fromkeys([c for c in display_cols if c in anomalies.columns]))
             df_display = anomalies[available].head(80).copy()
             if not df_display.empty and 'Risk_Score_Ensemble' in df_display.columns:
                 risk_vals = df_display['Risk_Score_Ensemble'].values
