@@ -884,17 +884,17 @@ print("  → [7C] Running adversarial evasion tests...")
 try:
     X_fraud_anomalies = X_fraud[df_paysim['Is_Anomaly'] == 1].values
     
+    # Fit scalers globally to prevent row-wise reshaping artifacts returning 0.0 evasion scores
+    adv_scaler = MinMaxScaler().fit((-sklearn_if.decision_function(X_fraud_anomalies)).reshape(-1, 1))
+    std_scaler = StandardScaler().fit(X_fraud_anomalies)
+
     def single_predict(X):
-        return MinMaxScaler().fit_transform(
-            (-sklearn_if.decision_function(X)).reshape(-1, 1)
-        ).flatten()
+        return adv_scaler.transform((-sklearn_if.decision_function(X)).reshape(-1, 1)).flatten()
     
     def ensemble_predict(X):
-        s1 = MinMaxScaler().fit_transform(
-            (-sklearn_if.decision_function(X)).reshape(-1, 1)
-        ).flatten()
+        s1 = single_predict(X)
         if ae_model is not None:
-            s2 = ae_anomaly_scores(ae_model, StandardScaler().fit_transform(X), ae_scaler)
+            s2 = ae_anomaly_scores(ae_model, std_scaler.transform(X), ae_scaler)
         else:
             s2 = np.zeros(len(X))
         return 0.5 * s1 + 0.5 * s2
