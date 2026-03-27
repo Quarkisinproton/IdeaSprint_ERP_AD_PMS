@@ -119,18 +119,35 @@ def show_login():
     """, unsafe_allow_html=True)
     col_l, col_form, col_r = st.columns([1, 1.2, 1])
     with col_form:
-        username = st.text_input("Username", placeholder="admin / auditor / engineer", key="login_user")
-        password = st.text_input("Password", type="password", placeholder="Enter password", key="login_pass")
-        if st.button("🔐 Access Command Center", type="primary", use_container_width=True):
-            if username in USERS and USERS[username]['password'] == password:
-                st.session_state['authenticated'] = True
-                st.session_state['username'] = username
-                st.session_state['role'] = USERS[username]['role']
-                st.rerun()
-            else:
-                st.error("❌ Invalid credentials. Try: admin/admin123")
-        with st.expander("🔑 Demo Credentials"):
-            st.markdown("| Username | Password | Role |\n|---|---|---|\n| `admin` | `admin123` | Full |\n| `auditor` | `audit2026` | Finance |\n| `engineer` | `eng2026` | Maintenance |")
+        tab_login, tab_onboard = st.tabs(["🔐 Sign In", "🚀 Enterprise Setup"])
+        
+        with tab_login:
+            st.markdown("<br>", unsafe_allow_html=True)
+            username = st.text_input("Username", placeholder="admin / auditor / engineer", key="login_user")
+            password = st.text_input("Password", type="password", placeholder="Enter password", key="login_pass")
+            if st.button("🔐 Access Command Center", type="primary", use_container_width=True):
+                if username in USERS and USERS[username]['password'] == password:
+                    st.session_state['authenticated'] = True
+                    st.session_state['username'] = username
+                    st.session_state['role'] = USERS[username]['role']
+                    st.rerun()
+                else:
+                    st.error("❌ Invalid credentials. Try: admin/admin123")
+            with st.expander("🔑 Demo Credentials"):
+                st.markdown("| Username | Password | Role |\n|---|---|---|\n| `admin` | `admin123` | Full |\n| `auditor` | `audit2026` | Finance |\n| `engineer` | `eng2026` | Maintenance |")
+
+        with tab_onboard:
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown("<span style='color: #94a3b8; font-size: 14px;'>Connect your live infrastructure or upload historical extracts to dynamically train the hybrid AI framework.</span>", unsafe_allow_html=True)
+            st.selectbox("Core Environment Integration", ["SAP S/4HANA", "Oracle ERP Cloud", "Snowflake Data Warehouse", "Microsoft Dynamics 365", "Custom PostgreSQL", "Standalone CSV/Excel DB"])
+            st.text_input("Connection String / IAM Key", type="password", placeholder="jdbc:sap://... or IAM token")
+            st.file_uploader("Override with Local Export (CSV/XLSX)", accept_multiple_files=True)
+            
+            if st.button("⚡ Authenticate & Initialize Data Engine", type="primary", use_container_width=True):
+                import time
+                with st.spinner("Extracting schema and validating tensors..."):
+                    time.sleep(2)
+                st.success("✅ Secure Handshake verified. In a live system, the 4-Model Data Engine would now orchestrate pipeline ingests.")
 
 if 'authenticated' not in st.session_state or not st.session_state['authenticated']:
     show_login()
