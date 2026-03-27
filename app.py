@@ -357,24 +357,8 @@ with tab_finance:
             st.metric("Active Drift Alarms", len(df_cusum))
             st.dataframe(df_cusum, use_container_width=True, height=200, hide_index=True)
 
-        # Section E: Adversarial
-        adv = data.get('adversarial', {})
-        if adv and 'evasion_rate_iforest' in adv:
-            st.divider()
-            st.markdown("#### 🛡️ Adversarial Robustness")
-            col_a1, col_a2 = st.columns(2)
-            with col_a1:
-                fig_adv = go.Figure(go.Bar(x=['IForest Alone', 'Full Ensemble'], y=[adv['evasion_rate_iforest']*100, adv['evasion_rate_ensemble']*100],
-                    marker_color=['#ef4444', '#10b981'], text=[f"{adv['evasion_rate_iforest']*100:.1f}%", f"{adv['evasion_rate_ensemble']*100:.1f}%"], textposition='outside'))
-                fig_adv.update_layout(title="Evasion Rate Comparison", height=250, **DARK_LAYOUT, yaxis=dict(title='Evasion %', range=[0, 110]))
-                st.plotly_chart(fig_adv, use_container_width=True)
-            with col_a2:
-                st.markdown(f"""<div class='info-card'>
-                    <b>🛡️ Adversarial Hardening Results</b><br><br>
-                    Hardening Factor: <b>{adv.get('hardening_factor', 0):.1f}x</b><br>
-                    Samples Tested: <b>{adv.get('samples_tested', 0)}</b><br><br>
-                    <i>{adv.get('interpretation', '')}</i>
-                </div>""", unsafe_allow_html=True)
+        # Section E: Adversarial - Removed for PPT focus
+        pass
     else:
         st.warning("Run `python data_engine.py` first.")
 
