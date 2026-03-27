@@ -198,6 +198,7 @@ def run_simulation(atype):
             ('💬', 'EURI MITIGATION: [ACTION] Opening Incident Response Bridge in MS Teams.'),
             ('✅', 'EURI MITIGATION: Data Breach Prevented. Intrusion Source Isolated.')
         ]
+    st.rerun()
 
 # Header UI Update for Simulation
 if st.session_state.get('sim_active'):
