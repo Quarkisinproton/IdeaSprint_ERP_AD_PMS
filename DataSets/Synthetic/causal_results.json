@@ -1,0 +1,8 @@
+{
+  "pagerank_fraud": {
+    "causal_estimate": 0.0,
+    "p_value": 1.0,
+    "refutation_new_effect": null,
+    "interpretation": "Causal analysis could not be completed: This solver needs samples of at least 2 classes in the data, but the data contains only one class: n"
+  }
+}

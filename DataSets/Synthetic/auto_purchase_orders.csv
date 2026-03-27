@@ -1,0 +1,21 @@
+PO_ID,engine_id,health_pct,rul_remaining,part_name,vendor,unit_cost,total_cost,urgency_level,auto_approved,justification,lead_time_days
+PO-0004-20260327,4,7.0,14,LPT Vane Segment,PrecisionAero Inc,51458.4,54031.32,CRITICAL,False,"RUL: 14 cycles, Health: 7.0%, P10=100% failure risk",18
+PO-0020-20260327,20,0.5,1,HPC Compressor Ring,PrecisionAero Inc,51458.4,54031.32,CRITICAL,False,"RUL: 1 cycles, Health: 0.5%, P10=100% failure risk",18
+PO-0008-20260327,8,14.2,20,HPC Compressor Ring,JetParts International,31871.78,33465.37,HIGH,True,"RUL: 20 cycles, Health: 14.2%, P10=100% failure risk",14
+PO-0002-20260327,2,96.2,179,Bearing Housing Unit,PrecisionAero Inc,75632.33,79413.95,MEDIUM,False,"RUL: 179 cycles, Health: 96.2%, P10=100% failure risk",5
+PO-0003-20260327,3,40.0,92,HPC Compressor Ring,PrecisionAero Inc,51458.4,54031.32,MEDIUM,False,"RUL: 92 cycles, Health: 40.0%, P10=100% failure risk",18
+PO-0005-20260327,5,44.2,106,Fuel Nozzle Kit,PrecisionAero Inc,51458.4,54031.32,MEDIUM,False,"RUL: 106 cycles, Health: 44.2%, P10=100% failure risk",18
+PO-0006-20260327,6,29.1,71,Turbine Blade Assembly,PrecisionAero Inc,75195.83,78955.62,MEDIUM,False,"RUL: 71 cycles, Health: 29.1%, P10=100% failure risk",11
+PO-0001-20260327,1,45.9,102,Fuel Nozzle Kit,AeroTech Corp,27840.44,29232.46,MEDIUM,True,"RUL: 102 cycles, Health: 45.9%, P10=100% failure risk",9
+PO-0009-20260327,9,55.1,102,Bearing Housing Unit,PrecisionAero Inc,51458.4,54031.32,MEDIUM,False,"RUL: 102 cycles, Health: 55.1%, P10=100% failure risk",18
+PO-0010-20260327,10,79.6,121,LPT Vane Segment,PrecisionAero Inc,51458.4,54031.32,MEDIUM,False,"RUL: 121 cycles, Health: 79.6%, P10=100% failure risk",18
+PO-0011-20260327,11,54.8,74,HPC Compressor Ring,Global Turbines Ltd,77637.91,81519.81,MEDIUM,False,"RUL: 74 cycles, Health: 54.8%, P10=100% failure risk",18
+PO-0012-20260327,12,55.4,87,LPT Vane Segment,PrecisionAero Inc,51458.4,54031.32,MEDIUM,False,"RUL: 87 cycles, Health: 55.4%, P10=100% failure risk",18
+PO-0013-20260327,13,92.8,116,Combustion Liner,PrecisionAero Inc,51458.4,54031.32,MEDIUM,False,"RUL: 116 cycles, Health: 92.8%, P10=100% failure risk",18
+PO-0014-20260327,14,41.9,99,Combustion Liner,AeroTech Corp,16094.55,16899.28,MEDIUM,True,"RUL: 99 cycles, Health: 41.9%, P10=100% failure risk",3
+PO-0015-20260327,15,52.6,103,Bearing Housing Unit,PrecisionAero Inc,64480.01,67704.01,MEDIUM,False,"RUL: 103 cycles, Health: 52.6%, P10=100% failure risk",3
+PO-0007-20260327,7,95.4,188,Fuel Nozzle Kit,AeroTech Corp,82594.24,86723.95,MEDIUM,False,"RUL: 188 cycles, Health: 95.4%, P10=100% failure risk",11
+PO-0016-20260327,16,78.2,151,HPC Compressor Ring,PrecisionAero Inc,60575.39,63604.16,MEDIUM,False,"RUL: 151 cycles, Health: 78.2%, P10=100% failure risk",11
+PO-0017-20260327,17,91.5,130,HPC Compressor Ring,AeroTech Corp,19449.08,20421.53,MEDIUM,True,"RUL: 130 cycles, Health: 91.5%, P10=100% failure risk",7
+PO-0018-20260327,18,81.9,149,LPT Vane Segment,PrecisionAero Inc,54287.04,57001.39,MEDIUM,False,"RUL: 149 cycles, Health: 81.9%, P10=100% failure risk",17
+PO-0019-20260327,19,25.2,52,Turbine Blade Assembly,AeroTech Corp,54289.4,57003.87,MEDIUM,False,"RUL: 52 cycles, Health: 25.2%, P10=100% failure risk",9

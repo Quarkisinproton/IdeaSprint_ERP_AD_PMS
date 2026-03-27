@@ -1,0 +1,49 @@
+{
+  "version": "4.0",
+  "trained_at": "2026-03-27T08:51:50.637842",
+  "models": {
+    "iforest": {
+      "path": "models/iforest_fraud.pkl",
+      "type": "PyOD"
+    },
+    "lof": {
+      "path": "models/lof_fraud.pkl",
+      "type": "PyOD"
+    },
+    "autoencoder": {
+      "path": "models/autoencoder_fraud.pt",
+      "final_loss": 0.05722659470502984
+    },
+    "gnn": {
+      "path": "models/gnn_fraud.pkl",
+      "type": "gnn_lite_xgb"
+    },
+    "xgb_fraud": {
+      "path": "models/xgb_fraud.pkl",
+      "type": "XGBoost"
+    },
+    "xgb_rul": {
+      "path": "models/xgb_rul.pkl",
+      "rmse": 6.295120539631813
+    },
+    "rf_rul": {
+      "path": "models/rf_rul.pkl",
+      "rmse": 7.954092768567137
+    },
+    "lstm_rul": {
+      "path": "models/lstm_rul.pt",
+      "rmse": 52.85862350463867
+    }
+  },
+  "risk_index": 76.2,
+  "innovations_completed": [
+    "causal",
+    "federated",
+    "adversarial",
+    "risk_index",
+    "auto_po",
+    "monte_carlo",
+    "cusum",
+    "counterfactuals"
+  ]
+}

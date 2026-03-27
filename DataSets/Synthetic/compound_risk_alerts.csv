@@ -1,0 +1,6 @@
+engine_id,rul_remaining,health_pct,vendor,gouging_pct,financial_anomaly_count,compound_risk,severity,recommended_action
+4,14,7.0,AeroTech Corp,60.0,1,True,CRITICAL,"ESCALATE: Switch vendor, investigate financial anomalies, urgent maintenance"
+6,71,29.1,PrecisionAero Inc,10.0,1,False,ELEVATED,Schedule maintenance within 48h
+8,20,14.2,JetParts International,10.0,1,False,ELEVATED,Schedule maintenance within 48h
+19,52,25.2,AeroTech Corp,10.0,1,False,ELEVATED,Schedule maintenance within 48h
+20,1,0.5,Global Turbines Ltd,60.0,1,True,CRITICAL,"ESCALATE: Switch vendor, investigate financial anomalies, urgent maintenance"

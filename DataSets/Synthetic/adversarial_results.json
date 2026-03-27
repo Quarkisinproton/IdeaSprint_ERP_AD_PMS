@@ -1,0 +1,9 @@
+{
+  "evasion_rate_iforest": 0.825,
+  "evasion_rate_ensemble": 0.165,
+  "mean_perturbation_single": 0.041,
+  "mean_perturbation_ensemble": 0.125,
+  "hardening_factor": 5.06,
+  "samples_tested": 200,
+  "interpretation": "The ensemble is 5.06x harder to evade than IForest alone. Evasion rate drops from 82.5% to 16.5%."
+}

@@ -1,0 +1,21 @@
+engine_id,part_name,vendor,base_market_price,vendor_quoted_price,price_deviation_pct,is_price_gouging,lead_time_days,vendor_reliability_score
+1,Fuel Nozzle Kit,AeroTech Corp,27840.44,30624.48,10.0,False,9,0.77
+2,Bearing Housing Unit,PrecisionAero Inc,75632.33,83195.56,10.0,False,5,0.61
+3,HPC Compressor Ring,JetParts International,73270.98,117233.58,60.0,True,3,0.72
+4,LPT Vane Segment,AeroTech Corp,45236.15,72377.84,60.0,True,12,0.62
+5,Fuel Nozzle Kit,JetParts International,31293.99,50070.39,60.0,True,14,0.8
+6,Turbine Blade Assembly,PrecisionAero Inc,75195.83,82715.41,10.0,False,11,0.63
+7,Fuel Nozzle Kit,AeroTech Corp,82594.24,90853.67,10.0,False,11,0.61
+8,HPC Compressor Ring,JetParts International,31871.78,35058.96,10.0,False,14,0.79
+9,Bearing Housing Unit,Global Turbines Ltd,42374.24,67798.79,60.0,True,6,0.72
+10,LPT Vane Segment,Global Turbines Ltd,53269.72,85231.55,60.0,True,20,0.9
+11,HPC Compressor Ring,Global Turbines Ltd,77637.91,85401.71,10.0,False,18,0.73
+12,LPT Vane Segment,PrecisionAero Inc,51458.4,56604.24,10.0,False,18,0.89
+13,Combustion Liner,JetParts International,39972.73,63956.37,60.0,True,15,0.65
+14,Combustion Liner,AeroTech Corp,16094.55,17704.0,10.0,False,3,0.68
+15,Bearing Housing Unit,PrecisionAero Inc,64480.01,70928.02,10.0,False,3,0.84
+16,HPC Compressor Ring,PrecisionAero Inc,60575.39,66632.93,10.0,False,11,0.84
+17,HPC Compressor Ring,AeroTech Corp,19449.08,21393.99,10.0,False,7,0.88
+18,LPT Vane Segment,PrecisionAero Inc,54287.04,59715.74,10.0,False,17,0.88
+19,Turbine Blade Assembly,AeroTech Corp,54289.4,59718.34,10.0,False,9,0.62
+20,HPC Compressor Ring,Global Turbines Ltd,45753.56,73205.69,60.0,True,9,0.79

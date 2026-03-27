@@ -1,0 +1,9 @@
+{
+  "centralized_auc": 0.7268,
+  "federated_auc": 0.7696,
+  "branch_a_local_auc": 0.813,
+  "branch_b_local_auc": 0.7323,
+  "privacy_epsilon": 6.7e-05,
+  "rounds": 3,
+  "interpretation": "Federated model achieves 105.9% of centralized performance with full data privacy"
+}
