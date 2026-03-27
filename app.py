@@ -139,6 +139,12 @@ def show_login():
         with tab_onboard:
             st.markdown("<br>", unsafe_allow_html=True)
             st.markdown("<span style='color: #94a3b8; font-size: 14px;'>Connect your live infrastructure or upload historical extracts to dynamically train the hybrid AI framework.</span>", unsafe_allow_html=True)
+            sector = st.selectbox("Business Sector", ["Manufacturing & Aerospace", "Financial Services / Banking", "SaaS / Tech Enterprise", "Logistics & Supply Chain"])
+            if sector == "SaaS / Tech Enterprise":
+                st.info("🛡️ Digital-First Selection: AI will prioritize Financial Fraud & HR Insider modules. Hardware Predictive Maintenance will be hibernated.")
+            elif sector == "Manufacturing & Aerospace":
+                st.info("⚙️ Asset-Heavy Selection: Full-stack activation (NASA RUL Engines + ERP Procurement Bridge).")
+            
             st.selectbox("Core Environment Integration", ["SAP S/4HANA", "Oracle ERP Cloud", "Snowflake Data Warehouse", "Microsoft Dynamics 365", "Custom PostgreSQL", "Standalone CSV/Excel DB"])
             st.text_input("Connection String / IAM Key", type="password", placeholder="jdbc:sap://... or IAM token")
             st.file_uploader("Override with Local Export (CSV/XLSX)", accept_multiple_files=True)
