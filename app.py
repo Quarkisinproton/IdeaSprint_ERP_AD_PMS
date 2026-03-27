@@ -955,6 +955,22 @@ with st.sidebar:
     st.markdown(f"**Version:** {manifest.get('version', '4.0')}")
     st.markdown(f"**Trained:** {manifest.get('trained_at', 'N/A')[:19]}")
     st.divider()
+    st.divider()
+    st.markdown('#### 💀 Live Threat Simulator')
+    cols = st.columns(3)
+    if cols[0].button('💰 Fin', use_container_width=True, help='Simulate Financial Fraud'): run_simulation('Financial')
+    if cols[1].button('⚙️ Mfg', use_container_width=True, help='Simulate Hardware Failure'): run_simulation('Manufacturing')
+    if cols[2].button('🌐 Cyber', use_container_width=True, help='Simulate System Breach'): run_simulation('Cyber')
+    
+    if st.session_state.get('sim_active'):
+        st.markdown(f'#### 🛠️ {st.session_state.get("sim_type", "EURI")} Agent Logs')
+        for icon, log in st.session_state.get('sim_logs', []):
+            st.markdown(f'<span style="font-size:11px;">{icon} {log}</span>', unsafe_allow_html=True)
+        if st.button('✅ Clear Alert', use_container_width=True):
+            st.session_state['sim_active'] = False
+            st.rerun()
+    st.divider()
+
     st.markdown(f"**User:** `{username}`")
     st.markdown(f"**Role:** {user_role}")
     if st.button("🚪 Logout", use_container_width=True):
